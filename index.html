@@ -245,6 +245,22 @@
     margin-top:16px;
     flex-wrap:wrap;
   }
+  /* Keep every header toolbar button pinned to a fixed width so the whole
+     row's layout/positions never shift when switching between English and
+     Thai (Thai labels are often a different length than their English
+     counterparts). Each width is sized to comfortably fit the LONGER of the
+     two language variants for that button. */
+  header.top .toolbar .btn{
+    justify-content:center;
+    box-sizing:border-box;
+    white-space:nowrap;
+  }
+  #langBtn{width:92px;}
+  #addHomeBtn{width:180px;}
+  #shareViewBtn{width:210px;}
+  #copySummaryBtn{width:170px;}
+  #resetBtn{width:190px;}
+  #clearBtn{width:150px;}
   .summary-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
@@ -633,7 +649,7 @@ const I18N = {
     summaryBank: "Bank",
     resetBtn: "\u21BA Reset to sample",
     clearBtn: "\uD83D\uDDD1 Clear all",
-    langBtnLabel: "\uD83C\uDF10 EN",
+    langBtnLabel: "\uD83C\uDF10 \u0E44\u0E17\u0E22",
     addHomeBtn: "\uD83D\uDCF2 Add to Home",
     chargesHeader: "\u2699\uFE0F Charges",
     serviceCharge: "Service Charge",
@@ -708,7 +724,7 @@ const I18N = {
     summaryBank: "\u0E1A\u0E31\u0E0D\u0E0A\u0E35",
     resetBtn: "\u21BA \u0E23\u0E35\u0E40\u0E0B\u0E47\u0E15\u0E40\u0E1B\u0E47\u0E19\u0E15\u0E31\u0E27\u0E2D\u0E22\u0E48\u0E32\u0E07",
     clearBtn: "\uD83D\uDDD1 \u0E25\u0E49\u0E32\u0E07\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14",
-    langBtnLabel: "\uD83C\uDF10 \u0E44\u0E17\u0E22",
+    langBtnLabel: "\uD83C\uDF10 EN",
     addHomeBtn: "\uD83D\uDCF2 \u0E40\u0E1E\u0E34\u0E48\u0E21\u0E44\u0E1B\u0E22\u0E31\u0E07\u0E2B\u0E19\u0E49\u0E32\u0E08\u0E2D",
     chargesHeader: "\u2699\uFE0F \u0E04\u0E48\u0E32\u0E1A\u0E23\u0E34\u0E01\u0E32\u0E23",
     serviceCharge: "\u0E04\u0E48\u0E32\u0E1A\u0E23\u0E34\u0E01\u0E32\u0E23 (Service Charge)",
@@ -1773,6 +1789,10 @@ function openIosInstallGuide(){
 }
 function closeIosInstallGuide(){document.getElementById("iosInstallBackdrop").classList.remove("open");}
 document.getElementById("addHomeBtn").addEventListener("click",openIosInstallGuide);
+if(window.navigator.standalone){
+  const addHomeBtnEl = document.getElementById("addHomeBtn");
+  if(addHomeBtnEl) addHomeBtnEl.style.display = "none";
+}
 document.getElementById("iosInstallClose").addEventListener("click",closeIosInstallGuide);
 document.getElementById("iosInstallBackdrop").addEventListener("click",e=>{if(e.target.id==="iosInstallBackdrop")closeIosInstallGuide();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeIosInstallGuide();});
