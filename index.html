@@ -600,6 +600,17 @@
   </div>
   <footer data-i18n="footerText">SplitEase · edits are saved automatically in this browser</footer>
 </div>
+<div class="ios-install-backdrop" id="iosInstallBackdrop" role="dialog" aria-modal="true" aria-labelledby="iosInstallTitle">
+  <div class="ios-install-sheet">
+    <button class="ios-install-close" id="iosInstallClose" aria-label="Close">×</button>
+    <div class="ios-install-head">
+      <img src="splitease-apple-touch-icon.png" class="ios-install-icon" alt="SplitEase app icon">
+      <div><h2 id="iosInstallTitle">Add SplitEase to Home Screen</h2><p id="iosInstallSubtitle">Open it like an app with the SplitEase icon.</p></div>
+    </div>
+    <ol class="ios-install-steps" id="iosInstallSteps"></ol>
+    <p class="ios-install-note" id="iosInstallNote"></p>
+  </div>
+</div>
 <script>
 const STORAGE_KEY = "splitBillDashboardState_v5";
 const LANG_KEY = "splitEaseLang";
@@ -1769,16 +1780,5 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")closeIosInstallGuide
 applyStaticTranslations();
 render();
 </script>
-<div class="ios-install-backdrop" id="iosInstallBackdrop" role="dialog" aria-modal="true" aria-labelledby="iosInstallTitle">
-  <div class="ios-install-sheet">
-    <button class="ios-install-close" id="iosInstallClose" aria-label="Close">×</button>
-    <div class="ios-install-head">
-      <img src="splitease-apple-touch-icon.png" class="ios-install-icon" alt="SplitEase app icon">
-      <div><h2 id="iosInstallTitle">Add SplitEase to Home Screen</h2><p id="iosInstallSubtitle">Open it like an app with the SplitEase icon.</p></div>
-    </div>
-    <ol class="ios-install-steps" id="iosInstallSteps"></ol>
-    <p class="ios-install-note" id="iosInstallNote"></p>
-  </div>
-</div>
 </body>
 </html>
