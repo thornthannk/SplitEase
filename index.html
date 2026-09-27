@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SplitEase</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="SplitEase">
+<link rel="apple-touch-icon" sizes="180x180" href="splitease-apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="splitease-icon-192.png">
+<link rel="manifest" href="splitease.webmanifest">
 <style>
   :root{
     --bg:#f2f2f2;
@@ -449,6 +456,29 @@
     pointer-events:none;
   }
   .view-only .status{cursor:default;}
+
+  .ios-install-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,.48);backdrop-filter:blur(5px);
+    display:none;align-items:flex-end;justify-content:center;padding:16px;z-index:9998;
+  }
+  .ios-install-backdrop.open{display:flex;}
+  .ios-install-sheet{
+    width:min(520px,100%);background:#fff;border:1px solid var(--border);border-radius:22px;
+    padding:20px;box-shadow:0 24px 65px rgba(0,0,0,.28);position:relative;
+  }
+  .ios-install-head{display:flex;align-items:center;gap:12px;padding-right:34px;margin-bottom:14px;}
+  .ios-install-icon{width:58px;height:58px;border-radius:14px;box-shadow:0 5px 16px rgba(0,0,0,.14);flex:none;}
+  .ios-install-head h2{margin:0 0 3px;font-size:18px;}
+  .ios-install-head p{margin:0;color:var(--muted);font-size:12.5px;}
+  .ios-install-close{position:absolute;right:14px;top:14px;border:0;background:var(--accent-soft);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;color:var(--text);}
+  .ios-install-steps{display:grid;gap:10px;margin:0;padding:0;list-style:none;}
+  .ios-install-step{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:11px 12px;border:1px solid var(--border);border-radius:12px;background:#fafafa;}
+  .ios-step-no{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-weight:700;font-size:13px;}
+  .ios-install-step b{display:block;font-size:13px;margin-bottom:2px;}
+  .ios-install-step span{display:block;color:var(--muted);font-size:12.5px;line-height:1.45;}
+  .ios-share-symbol{font-size:18px;color:#1877f2;font-weight:700;}
+  .ios-install-note{margin:12px 2px 0;color:var(--muted);font-size:11.5px;line-height:1.45;}
+  @media(min-width:641px){.ios-install-backdrop{align-items:center}.ios-install-sheet{border-radius:18px;}}
 </style>
 </head>
 <body>
@@ -460,6 +490,7 @@
     </div>
     <div class="toolbar">
       <button class="btn" id="langBtn" data-i18n="langBtnLabel">🌐 EN</button>
+      <button class="btn" id="addHomeBtn" data-i18n="addHomeBtn">📲 Add to Home</button>
       <button class="btn primary" id="shareViewBtn" data-i18n="shareBtn">🔗 Share (View Only)</button>
       <button class="btn" id="copySummaryBtn" data-i18n="copySummaryBtn">📋 Copy Summary</button>
       <button class="btn" id="resetBtn" data-i18n="resetBtn">↺ Reset to sample</button>
@@ -568,6 +599,18 @@
   </div>
   <footer data-i18n="footerText">SplitEase · edits are saved automatically in this browser</footer>
 </div>
+
+<div class="ios-install-backdrop" id="iosInstallBackdrop" role="dialog" aria-modal="true" aria-labelledby="iosInstallTitle">
+  <div class="ios-install-sheet">
+    <button class="ios-install-close" id="iosInstallClose" aria-label="Close">×</button>
+    <div class="ios-install-head">
+      <img src="splitease-apple-touch-icon.png" class="ios-install-icon" alt="SplitEase app icon">
+      <div><h2 id="iosInstallTitle">Add SplitEase to Home Screen</h2><p id="iosInstallSubtitle">Open like an app with the SplitEase icon.</p></div>
+    </div>
+    <ol class="ios-install-steps" id="iosInstallSteps"></ol>
+    <p class="ios-install-note" id="iosInstallNote"></p>
+  </div>
+</div>
 <script>
 const STORAGE_KEY = "splitBillDashboardState_v5";
 const LANG_KEY = "splitEaseLang";
@@ -591,6 +634,7 @@ const I18N = {
     resetBtn: "\u21BA Reset to sample",
     clearBtn: "\uD83D\uDDD1 Clear all",
     langBtnLabel: "\uD83C\uDF10 EN",
+    addHomeBtn: "\uD83D\uDCF2 Add to Home",
     chargesHeader: "\u2699\uFE0F Charges",
     serviceCharge: "Service Charge",
     vatLabel: "VAT",
@@ -665,6 +709,7 @@ const I18N = {
     resetBtn: "\u21BA \u0E23\u0E35\u0E40\u0E0B\u0E47\u0E15\u0E40\u0E1B\u0E47\u0E19\u0E15\u0E31\u0E27\u0E2D\u0E22\u0E48\u0E32\u0E07",
     clearBtn: "\uD83D\uDDD1 \u0E25\u0E49\u0E32\u0E07\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14",
     langBtnLabel: "\uD83C\uDF10 \u0E44\u0E17\u0E22",
+    addHomeBtn: "\uD83D\uDCF2 \u0E40\u0E1E\u0E34\u0E48\u0E21\u0E44\u0E27\u0E49\u0E17\u0E35\u0E48\u0E2B\u0E19\u0E49\u0E32\u0E08\u0E2D",
     chargesHeader: "\u2699\uFE0F \u0E04\u0E48\u0E32\u0E1A\u0E23\u0E34\u0E01\u0E32\u0E23",
     serviceCharge: "\u0E04\u0E48\u0E32\u0E1A\u0E23\u0E34\u0E01\u0E32\u0E23 (Service Charge)",
     vatLabel: "\u0E20\u0E32\u0E29\u0E35\u0E21\u0E39\u0E25\u0E04\u0E48\u0E32\u0E40\u0E1E\u0E34\u0E48\u0E21 (VAT)",
@@ -1690,6 +1735,49 @@ if(langBtnEl){
     render();
   });
 }
+
+function iosInstallCopy(){
+  const th = lang === "th";
+  return th ? {
+    title:"เพิ่ม SplitEase ไปที่หน้าจอโฮม",
+    subtitle:"เปิดใช้งานเหมือนแอป พร้อมไอคอน SplitEase",
+    steps:[
+      ["เปิดด้วย Safari","หากกำลังเปิดผ่าน LINE, Chrome หรือแอปอื่น ให้เลือกเปิดลิงก์นี้ใน Safari ก่อน"],
+      ["แตะปุ่มแชร์","แตะไอคอนแชร์ของ Safari (สี่เหลี่ยมมีลูกศรชี้ขึ้น) ที่แถบเครื่องมือ"],
+      ["เลือก Add to Home Screen","เลื่อนเมนูแล้วเลือก “เพิ่มไปยังหน้าจอโฮม” หรือ “Add to Home Screen”"],
+      ["แตะ Add","ตรวจชื่อ SplitEase และไอคอน แล้วแตะ “เพิ่ม” ที่มุมขวาบน"]
+    ],
+    note:"iOS ต้องให้ผู้ใช้เพิ่มผ่านเมนู Share ของ Safari ด้วยตัวเอง เว็บไซต์ไม่สามารถกดเพิ่มให้อัตโนมัติได้"
+  } : {
+    title:"Add SplitEase to Home Screen",
+    subtitle:"Open it like an app with the SplitEase icon.",
+    steps:[
+      ["Open in Safari","If this page is open in LINE, Chrome, or another app, open the link in Safari first."],
+      ["Tap Share","Tap Safari’s Share icon, the square with an upward arrow, in the toolbar."],
+      ["Choose Add to Home Screen","Scroll the share sheet and choose “Add to Home Screen.”"],
+      ["Tap Add","Check the SplitEase name and icon, then tap “Add” in the upper-right corner."]
+    ],
+    note:"iOS requires this manual Safari Share action. A website cannot add itself to the Home Screen automatically."
+  };
+}
+function openIosInstallGuide(){
+  if(window.navigator.standalone){
+    showToast(lang === "th" ? "SplitEase เปิดจากหน้าจอโฮมอยู่แล้ว" : "SplitEase is already open from the Home Screen.");
+    return;
+  }
+  const c=iosInstallCopy();
+  document.getElementById("iosInstallTitle").textContent=c.title;
+  document.getElementById("iosInstallSubtitle").textContent=c.subtitle;
+  document.getElementById("iosInstallSteps").innerHTML=c.steps.map((step,i)=>`<li class="ios-install-step"><div class="ios-step-no">${i+1}</div><div><b>${escapeHtml(step[0])}</b><span>${escapeHtml(step[1])}</span></div></li>`).join("");
+  document.getElementById("iosInstallNote").textContent=c.note;
+  document.getElementById("iosInstallBackdrop").classList.add("open");
+}
+function closeIosInstallGuide(){document.getElementById("iosInstallBackdrop").classList.remove("open");}
+document.getElementById("addHomeBtn").addEventListener("click",openIosInstallGuide);
+document.getElementById("iosInstallClose").addEventListener("click",closeIosInstallGuide);
+document.getElementById("iosInstallBackdrop").addEventListener("click",e=>{if(e.target.id==="iosInstallBackdrop")closeIosInstallGuide();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeIosInstallGuide();});
+
 applyStaticTranslations();
 render();
 </script>
